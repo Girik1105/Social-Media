@@ -17,7 +17,7 @@ python manage.py runserver
 - Personalised feed
 - Search user functionality 
 
-<img src="assets/home.png">
+<img src="assets/home.png" width="500px">
 
 <img src="assets/posts.png">
 
