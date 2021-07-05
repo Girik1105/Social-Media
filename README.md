@@ -17,14 +17,14 @@ python manage.py runserver
 - Personalised feed
 - Search user functionality 
 
-<img src="assets/home.jpg">
+<img src="assets/home.png">
 
-<img src="assets/posts.jpg">
+<img src="assets/posts.png">
 
-<img src="assets/profiles.jpg">
+<img src="assets/profiles.png">
 
-<img src="assets/groups.jpg">
+<img src="assets/groups.png">
 
-<img src="assets/groupposts.jpg">
+<img src="assets/groupposts.png">
 
-<img src="assets/notifs.jpg">
+<img src="assets/notifs.png">
