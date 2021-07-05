@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block LeftContent %}
+<div class="container mt-5">
+  {% if user == group.admin %}
+    <a class="btn btn-success" href="{% url 'update-group' group.slug %}">Update Group Details</a>
+  {% endif %}
+</div>
+
+
+<div class="row mt-5 ml-1">
+  <h6 class="">
+    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="26" height="26" fill="#0DFC00" class="bi bi-shield-check" viewBox="0 0 16 16">
+      <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z"/>
+      <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+    </svg>
+    Admin:
+  </h6>
+
+  <div class="col-md-12">
+    <img src="{{ group.admin.profile.profile_pic.url }}" class="float-left mr-2" height="50px" width="50px" style="border-radius: 100%;" alt="">
+    <h5 class="card-title mt-2"><a href="{% url 'profile_view' pk=group.admin.pk %}">@{{ group.admin.username }}{% for user in oldest_members %}{% if group.admin == user.user %}<i class="mb-1 ml-1" style="color:rgb(0, 89, 255); height:20px; width:20px;" data-feather="star"></i>{% endif %}{% endfor %} </a></h5>
+  </div>
+
+  <h6 class="mt-2">
+    <i class="mod" data-feather="user-plus"></i>
+    Moderators:
+  </h6>
+
+  {% for mod in group.moderators.all %}
+    <div class="container col-md-12 ">
+      <img src="{{ mod.profile.profile_pic.url }}" class="float-left mr-2" height="50px" width="50px" style="border-radius: 100%;" alt="">
+      <h5 class="card-title mt-2"><a href="{% url 'profile_view' pk=mod.pk %}">@{{ mod.username }}{% for user in oldest_members %}{% if mod == user.user %}<i class="mb-1 ml-1" style="color:rgb(0, 89, 255); height:20px; width:20px;" data-feather="star"></i>{% endif %}{% endfor %}</a></h5>
+      
+    </div>
+  {% endfor %}
+
+
+  <h6 class=" mt-4">
+    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1"   width="26" height="26" fill="blue"  class="bi bi-people" viewBox="0 0 16 16">
+      <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+    </svg>
+    Members:
+  </h6>
+  {% for group_user in group.members.all %}
+    {% if group_user != group.admin%}
+      {% if group_user not in group.moderators.all %}
+      <div class="container col-md-12 mt-3">
+        <img src="{{ group_user.profile.profile_pic.url }}" class="float-left" height="50px" width="50px" style="border-radius: 100%;" alt="">
+        <h5 class="card-title mt-2"><a href="{% url 'profile_view' pk=group_user.pk %}">@{{ group_user.username }}{% for user in oldest_members %}{% if group_user == user.user %}<i class="mb-1 ml-1" style="color:rgb(0, 89, 255); height:20px; width:20px;" data-feather="star"></i>{% endif %}{% endfor %}</a></h5>
+      </div> 
+      {% endif %}    
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock LeftContent %}
+
+{% block maincontent %}
+<div class="row justify-content-center mt-5">
+  
+  <div class="col-md-12">
+    <img src="{{ group.cover.url }}"  width="100%" style="border-radius: 15px;" alt="">
+  </div>
+
+  <div class="col-md-12 justify-content-center mt-2 mb-2">
+  
+    <p class="float-right">Since: {{ group.created_on|timesince }}</p>
+
+    <h1>{{ group.name }}</h1>
+    <h4>{{ group.description }}</h4>
+    
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+      <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+      <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+    </svg> 
+    {{ group.members.count }}</h2>
+
+    {% if user in group.members.all %}
+    <a href="{% url 'leave' slug=group.slug %}" class="btn btn-lg btn-warning"><span class="fa fa-times-circle-o"></span> Leave</a>
+    {% else %}
+    <a href="{% url 'join' slug=group.slug %}" class="btn btn-lg btn-success"><span class="fa fa-check-circle-o"></span> Join</a>
+    {% endif %}
+    
+  </div>
+    
+
+{% if user in group.members.all %} 
+<div class="col-md-10 mt-5 p-3">
+  <h2 class="text-center">Post something to the Group:</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% bootstrap_form post_form %}
+    {% csrf_token %}
+    <input class="btn btn-primary" type="submit" value="Post">
+    </form>
+</div>
+{% else %}
+<p>Join to Post something in the group</p>
+{% endif %}
+
+  <div class="container col-md-12 mt-3">
+    <h1 class="text-center">Group Posts</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+    {% for post in group.groupposts.all %}
+      <div class="card mt-2" style="width: 80%; margin-left: 10%; border-radius: 20px;">
+
+        {% if post.image %}
+        <div class="ml-3 mt-2 mb-2">
+          <a href="{% url 'profile_view' pk=post.author.pk %}"> <img src="{{ post.author.profile.profile_pic.url }}" class="float-left mr-2" height="50px" width="50px" style="border-radius: 100%;" alt="">
+          <h5 class="card-title mt-2 ml-5">@{{ post.author.username }}
+
+            {% if user == post.author %}
+            <a class="btn round_img mr-2 float-right" href="{% url 'edit-group-post' pk=post.pk %}">
+              <i data-feather="edit-3"></i>
+            </a>
+            {% endif %}
+
+            {% if user in group.moderators.all or user == group.admin or user == post.author %}
+            <a class="btn round_img float-right" href="{% url 'delete-group-post' pk=post.pk %}">
+              <i data-feather="trash-2"></i>
+            </a>
+            {% endif %}
+
+          </h5></a>
+
+        </div>
+        <img src="{{ post.image.url }}"  class="float-left card-img-top" alt="...">
+        {% endif %}
+        <div class="card-body">
+          {% if not post.image %}
+          <a href="{% url 'profile_view' pk=post.author.pk %}"><img src="{{ post.author.profile.profile_pic.url }}" class="float-left mr-2" height="50px" width="50px" style="border-radius: 100%;" alt="">
+          <h5 class="card-title mt-2 ml-5">@{{ post.author.username }}
+
+            {% if user == post.author %}
+            <a class="btn round_img float-right" href="{% url 'edit-group-post' pk=post.pk %}">
+              <i data-feather="edit-3"></i>
+            </a>
+            {% endif %}
+
+            {% if user in group.moderators.all or user == group.admin or user == post.author %}
+            <a class="btn round_img float-right" href="{% url 'delete-group-post' pk=post.pk %}">
+              <i data-feather="trash-2"></i>
+            </a>
+            {% endif %}
+
+          </h5></a>
+          {% endif %}
+          {% if post.image %}
+          <p class="card-text mt-1">{{ post.content|safe }}</p>
+          {% else %}
+          <p class="card-text mt-5">{{ post.content|safe }}</p>
+          {% endif %}
+          <p class="card-text text-muted">{{ post.timestamp|date:"d M Y" }}</p>
+
+        </div>
+      </div>
+    {% empty %}
+    <p>No posts yet!</p>
+  {% endfor %}
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+</div>  
+  
+</div>
+{% endblock maincontent %}
+
+
+{% block RightContent %}
+<!-- Button trigger modal -->
+{% if user.username == group.admin.username or user in group.moderators.all %}
+<button type="button" class="btn btn-danger mt-5" data-toggle="modal" data-target="#exampleModal">
+  Manage Members
+</button>
+{% endif %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Manage Members</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">
+        {% for group_user in group.members.all %}
+        {% if group_user != group.admin%}
+        <div class="container col-md-12 mt-3">
+          <img src="{{ group_user.profile.profile_pic.url }}" class="float-left mr-2" height="50px" width="50px" style="border-radius: 100%;" alt="">
+          <h5 class="card-title float-left mt-2">@{{ group_user.username }}</h5>
+          <a class="btn btn-warning float-right mt-2 ml-2" href="{% url 'remove-member' group=group person=group_user %}">Kick</a>        
+          <a class="btn btn-danger float-right mt-2 ml-2" href="{% url 'ban-member' group=group person=group_user %}">Ban</a>
+          {% if user == group.admin %}
+          <a class="btn btn-success float-right mt-2 ml-2" href="{% url 'make-mod-member' group=group person=group_user %}">Make Mod</a>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock RightContent %}
+

@@ -1,0 +1,38 @@
+{% load static %}
+{% if notifications %}
+    {% for notif in notifications  %}
+    {% if notif.post %}
+        {% if notif.notification_type == 1 %}
+            <li class="dropdown-tem">
+                <img class="float-left ml-1 mt-1" src="{{ notif.from_user.profile.profile_pic.url }}" style="border-radius:100%;" height="20" width="20" alt="Image Not loaded"> 
+                <p><a href="{% url 'profile_view' notif.from_user.pk %}">@{{ notif.from_user }}</a> <br>
+                liked your <a href="{% url 'post_detail' notif.post.pk %}">post</a> <span onclick="removeNotification(`{% url 'remove-notification' notif.pk %}`, `{{ request.path }}`)">&times;</span></p> 
+            </li>
+        {% elif notif.notification_type == 2 %}
+            <li class="dropdown-tem">
+                <img class="float-left ml-1 mt-1" src="{{ notif.from_user.profile.profile_pic.url }}" style="border-radius:100%;" height="20" width="20" alt="Image Not loaded">
+                <p><a href="{% url 'profile_view' notif.from_user.pk %}">@{{ notif.from_user }}</a> <br>
+                commented on your <a href="{% url 'post_detail' notif.post.pk %}">post</a> <span onclick="removeNotification(`{% url 'remove-notification' notif.pk %}`, `{{ request.path }}`)">&times;</span></p> 
+            </li>
+        {% endif %}
+    {% elif notif.comment %}
+        {% if notif.notification_type == 1 %}
+            <li class="dropdown-tem">
+                <img class="float-left ml-1 mt-1" src="{{ notif.from_user.profile.profile_pic.url }}" style="border-radius:100%;" height="20" width="20" alt="Image Not loaded"> 
+                <p><a href="{% url 'profile_view' notif.from_user.pk %}">@{{ notif.from_user }}</a> <br>
+                liked your <a href="{% url 'post_detail' notif.comment.post.pk %}">comment</a> <span onclick="removeNotification(`{% url 'remove-notification' notif.pk %}`, `{{ request.path }}`)">&times;</span></p> 
+            </li>
+        {% endif %}
+    {% else %}
+        <li class="dropdown-tem">
+            <img class="float-left ml-1 mt-1" src="{{ notif.from_user.profile.profile_pic.url }}" style="border-radius:100%;" height="20" width="20" alt="Image Not loaded"> 
+            <p><a href="{% url 'profile_view' notif.from_user.pk %}">@{{ notif.from_user }}</a> <br>
+            Started Following you!</a> <span onclick="removeNotification(`{% url 'remove-notification' notif.pk %}`, `{{ request.path }}`)">&times;</span></p> 
+        </li>
+    {% endif %}
+{% endfor %}
+{% else %}
+<li class="dropdown-tem">
+    <p class="ml-2">No Notifications</p>
+</li>
+{% endif %}

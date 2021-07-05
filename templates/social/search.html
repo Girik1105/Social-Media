@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+
+{% block LeftContent %}
+<div class="d-grid gap-2 m-2 p-1">
+  <a style="width:100%;" href="{% url "post_list" %}" class="btn btn-light mb-3">Back to All Posts</a>
+</div>
+
+{% endblock %}
+
+
+{% block maincontent %}
+<div class="row justify-content-center mt-3">
+  <div class="col-md-8 col-sm-12 p-4">
+    <h1>Search Results:</h1>
+    {% for person in profile_list %}
+    <div class="p-2 pb-4 bg-light mt-2">
+      <a class="stretched-link" style="text-decoration:none; color:black;" href="{% url "profile_view" person.pk %}">
+         <h4 class="mt-3">
+           <img src="{{ person.profile_pic.url }}"  class="float-left" style="border-radius:100%;"  class="mr-2" height="100" width="100" alt="Image Unabale to load">
+              <span class="ml-4">@{{ person.user.username }}</span>
+           <br>
+        <span class="text-muted ml-4" style="font-size:15px;">{% if person.name %}{{ person.name }}{% endif %}</span>
+          {% if person.verified %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0073E0" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
+              </svg>
+              {% endif %}
+          <br>
+        <span class="ml-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          </svg> {{ person.followers.count }}
+
+
+        </span>
+     </h4>
+         </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

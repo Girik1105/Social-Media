@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+{% load static %}
+{% load custom_tags %}
+
+<html lang="en" dir="ltr">
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta charset="utf-8">
+
+    <title>
+      {% block title %}
+        Social Media
+      {% endblock %}
+    </title>
+
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="{% static 'css/master.css' %}">
+
+    <!-- bootstarp css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+
+  </head>
+  <body>
+
+  <div class="container">
+
+    <nav class="MynavigationBar navbar navbar-expand-lg navbar-light sticky">
+
+      <a class="navbar-brand" href="{% if user.is_authenticated %}{% url "post_list" %}{% else %}{% url "home" %}{% endif %}">Social Media</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+
+
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "post_list" %}">Posts</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "list-group" %}">Groups</a>
+          </li>
+
+
+          {% else %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url "home" %}">Home <span class="sr-only">(current)</span></a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "account_login" %}">Login</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "account_signup" %}">Sign up</a>
+          </li>
+          {% endif %}
+
+        </ul>
+
+        <form class="form-inline" action="{% url "search" %}">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name="query" value="{{ request.GET.query }}">
+          </div>
+        </form>
+
+        {% if user.is_authenticated %}
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown"  id="naavbarnotif"  role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+            <i data-feather="inbox"></i>
+          </a>
+          
+          <ul class="dropdown-menu"  aria-labelledby="naavbarnotif">
+              {% show_notifications %}
+          </ul>
+            
+        </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown"  id="navbarDropdownMenuLink"  role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="{{ user.profile.profile_pic.url }}" class="round_img" height="36" widht="36" alt="img not loaded">
+            </a>
+
+            <ul class="dropdown-menu"  aria-labelledby="navbarDropdownMenuLink">
+              <li class="pl-4 pb-2 bg-light">@{{ user.username }}</li>
+              <li><a class="dropdown-item" href="{% url 'profile_view' pk=user.profile.pk %}">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'account_logout' %}">Sign Out</a></li>
+            </ul>
+          </div>
+
+          {% endif %}
+
+      </div>
+    </nav>
+
+
+
+</div>
+
+<div class="container-fluid">
+<div class="row">
+
+  <div class="col-lg-2 col-md-2 col-sm-12">
+  {% block LeftContent %}
+
+  {% endblock %}
+  </div>
+
+  <div class="col-lg-8 col-md-10 col-sm-12">
+    {% if messages %}
+    <div class="row justify-content-center pt-3">
+      <div class="col-md-6">
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">{{message}}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+    {% endif %}
+
+
+  {% block maincontent %}
+
+  {% endblock %}
+  </div>
+
+  <div class="col-lg-2 col-md-12 col-sm-12">
+  {% block RightContent %}
+
+  {% endblock %}
+  </div>
+
+</div>
+</div>
+
+
+
+<!-- bootstrap js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <script src="{% static 'js/social.js' %}"></script>
+
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <script>
+    feather.replace()
+  </script>
+
+  </body>
+</html>

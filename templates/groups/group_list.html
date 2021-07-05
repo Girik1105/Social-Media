@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block LeftContent %}
+
+{% endblock LeftContent %}
+
+{% block maincontent %}
+  
+
+<div class="row justify-content-center mt-5 p-3">
+
+<div class="col-md-12">
+  <h1 class="text-center m-3">Available Groups:</h1>
+</div>
+
+<div class="col-md-12">
+  <form class="mt-2 mb-2" action="{% url 'group-search' %}">
+    <div class="input-group">
+      <div class="input-group-prepend">
+      </div>
+      <input type="text"  class="form-control" name='query' placeholder="Search Groups">
+      <input type="submit" value="Search" class="btn btn-primary mb-2 ml-1">
+
+    </div>
+  </form>
+</div>
+
+  {% for item in group_list %}
+  <div class="card mb-3 col-md-12">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+       <a href="{% url 'detail-group' item.slug %}"><img src="{{ item.cover.url }}" height="100%" width="100%" alt="..."></a>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <a href="{% url 'detail-group' item.slug %}"> <h5 class="card-title">{{ item.name }}</h5></a>
+          <p class="card-text">{{ item.description }}</p>
+          <p class="card-text"><small class="text-muted">Since: {{ item.created_on|timesince }}</small></p>
+          <p class="card-text float-left"><i class="mb-2" data-feather="users"></i><span class="font_big ml-2">{{ item.members.all.count }}</span></p>
+          <p class="card-text float-left ml-3"><i class="mb-2" data-feather="align-justify"></i><span class="font_big ml-2">{{ item.groupposts.all.count }}</span></p>          
+        </div>  
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+{% endblock maincontent %}
+
+
+{% block RightContent %}
+  
+{% endblock RightContent %}

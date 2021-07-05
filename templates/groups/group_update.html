@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block LeftContent %}
+
+{% endblock LeftContent %}
+
+{% block maincontent %}
+  
+  <h1>update {{ group.name }}</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <input class="btn btn-primary" type="submit" value="Update Group">
+  </form>
+
+{% endblock maincontent %}
+
+
+{% block RightContent %}
+  
+{% endblock RightContent %}

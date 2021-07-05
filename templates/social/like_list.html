@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+
+{% block maincontent %}
+<div class="row justify-content-center mt-3">
+  <div class="col-md-8 col-sm-12 bg-light p-4">
+    <h1>People who Liked this Post: ({{ post.likes.count }} Likes)</h1>
+    {% for person in post.likes.all %}
+      <h4 class="mt-3"><img src="{{ person.profile.profile_pic.url }}"  style="border-radius:100%;"  class="mr-2" height="40" width="40" alt="Image Unabale to load">{{ person }}</h4>
+    {% endfor %}
+    <a class="btn btn-outline-dark mt-4" href="{% url 'post_detail' pk=post.pk %}">Back To Post</a>
+
+  </div>
+</div>
+{% endblock %}
