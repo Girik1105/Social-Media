@@ -44,8 +44,12 @@ class PostListView(LoginRequiredMixin, View):
         share_form = forms.ShareForm()
 
         if form.is_valid():
-            form.instance.author = request.user
-            form.save()
+            # form.instance.author = request.user
+            new_post =  form.save(commit=False)
+            new_post.author = request.user
+            new_post.save()
+            
+            new_post.create_tags()
 
         context = {
             'post_list':posts,
@@ -108,9 +112,16 @@ class PostDetailView(LoginRequiredMixin, View):
         form = forms.CommentForm(request.POST)
 
         if form.is_valid():
-            form.instance.author = request.user
-            form.instance.post = post
-            form.save()
+            # form.instance.author = request.user
+            # form.instance.post = post
+            # form.save()
+            new_comment = form.save(commit=False)
+            new_comment.author = request.user
+            new_comment.post = post
+            new_comment.save()
+
+            new_comment.create_tags()
+            
             models.Notification.objects.create(notification_type = 2, from_user = request.user, to_user = post.author, post=post)
 
         context = {

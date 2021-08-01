@@ -18,6 +18,32 @@ class Post(models.Model):
     shared_body = models.TextField(blank=True, null=True)
     og_post_date = models.DateTimeField(blank=True, null=True)
 
+    tags = models.ManyToManyField('Tag', blank=True)
+
+    def create_tags(self):
+        for word in self.body.split():
+            if word[0] == "#":
+                tag = Tag.objects.filter(name=word[1:]).first()
+                if tag:
+                    self.tags.add(tag.pk)
+                else:
+                    new_tag =Tag(name=word[1:])
+                    new_tag.save()
+                    self.tags.add(new_tag.pk)
+                self.save()
+
+        if self.shared_body:
+            for word in self.shared_body.split():
+                if word[0] == "#":
+                    tag = Tag.objects.filter(name=word[1:]).first()
+                    if tag:
+                        self.tags.add(tag.pk)
+                    else:
+                        new_tag =Tag.objects.create(name=word[1:])
+                        new_tag.save()
+                        self.tags.add(new_tag.pk)
+                    self.save()
+
     class Meta:
         ordering = ['-created_on']
 
@@ -29,6 +55,20 @@ class Comment(models.Model):
     likes = models.ManyToManyField(User, blank = True, related_name="comment_likes")
  
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank = True, null= True, related_name='+')
+
+    tags = models.ManyToManyField('Tag', blank=True)
+
+    def create_tags(self):
+        for word in self.comment.split():
+            if word[0] == "#":
+                tag = Tag.objects.filter(name=word[1:]).first()
+                if tag:
+                    self.tags.add(tag.pk)
+                else:
+                    new_tag =Tag.objects.create(name=word[1:])
+                    new_tag.save()
+                    self.tags.add(new_tag.pk)
+                self.save()
 
     @property
     def child(self):
@@ -92,3 +132,7 @@ class Notification(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     user_has_seen = models.BooleanField(default=False)
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=75)
