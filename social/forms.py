@@ -37,3 +37,13 @@ class ProfileForm(forms.ModelForm):
         model = models.UserProfile
 
         fields = ('name', 'bio', 'gender', 'birth_date', 'location', 'profile_pic', 'profile_background')
+
+
+class ShareForm(forms.Form):
+    body = forms.CharField(
+        label='',
+        widget = forms.Textarea(attrs={
+            'rows':'3',
+            'placeholder':'Quote'
+        })
+    )

@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 
 from django.db.models import Q
+from django.utils import timezone
 
 from django.views.generic import View, TemplateView, ListView, DetailView, DeleteView, UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -20,24 +21,27 @@ class PostListView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request, *args, **kwargs):
-
         posts = models.Post.objects.all().order_by('-created_on')
         form = forms.PostForm
+        share_form = forms.ShareForm()
+        
         follow = list(models.UserProfile.objects.all())
         follow = random.choices(follow,  k = 5)
         follow = set(follow)
+        
         context = {
             'post_list':posts,
             'follow':follow,
             'form':form,
+            'shareform':share_form, 
         }
 
         return render(request, 'social/post_list.html', context)
 
     def post(self, request, *args, **kwargs):
-
         posts = models.Post.objects.all().order_by('-created_on')
         form = forms.PostForm(request.POST, request.FILES)
+        share_form = forms.ShareForm()
 
         if form.is_valid():
             form.instance.author = request.user
@@ -45,17 +49,49 @@ class PostListView(LoginRequiredMixin, View):
 
         context = {
             'post_list':posts,
-            'form':form
+            'form':form,
+            'shareform':share_form, 
         }
 
         return redirect(reverse("post_list"))
+
+class SharedPostView(View):
+    def post(self, request, pk,*args, **kwargs):
+        orignal_post = models.Post.objects.get(pk=pk)
+        
+        if orignal_post.author != request.user and orignal_post.shared_user != request.user:
+            form = forms.ShareForm(request.POST)
+            if form.is_valid():
+                new_post = models.Post(
+                    shared_body = self.request.POST.get('body'),
+                    body = orignal_post.body,
+                    author = orignal_post.author,
+                    shared_user=request.user,  
+                    og_post_date=orignal_post.created_on,
+                    image = orignal_post.image,
+                )
+
+            new_post.save()
+
+        return redirect('post_list')
+    
+class SharedPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+
+    login_url = '/accounts/login/'
+
+    model = models.Post
+    template_name = 'social/post_delete.html'
+    success_url = reverse_lazy("post_list")
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.shared_user
 
 class PostDetailView(LoginRequiredMixin, View):
 
     login_url = '/accounts/login/'
 
     def get(self, request, pk, *args, **kwargs):
-
         post = models.Post.objects.get(pk=pk)
         form = forms.CommentForm
 
@@ -68,7 +104,6 @@ class PostDetailView(LoginRequiredMixin, View):
 
 
     def post(self, request, pk,*args, **kwargs):
-
         post = models.Post.objects.get(pk=pk)
         form = forms.CommentForm(request.POST)
 

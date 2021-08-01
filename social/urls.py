@@ -10,6 +10,8 @@ urlpatterns = [
     path('posts/<pk>/', views.PostDetailView.as_view(), name='post_detail'),
     path('posts/<pk>/edit/', views.PostEditView.as_view(), name='post_edit'),
     path('posts/<pk>/Delete/', views.PostDeleteView.as_view(), name='post_delete'),
+    path('posts/share/<pk>/', views.SharedPostView.as_view(), name='share_post'),
+    path('posts/shared//delete/<pk>/', views.SharedPostDeleteView.as_view(), name='share_post_delete'),
 
     path('post/<pk>/like/', views.AddLike.as_view(), name='Add-Like'),
     path('post/<pk>/likes/', views.LikeListView.as_view(), name='people-liked'),
