@@ -47,3 +47,11 @@ class ShareForm(forms.Form):
             'placeholder':'Quote'
         })
     )
+
+class exploreForm(forms.Form):
+    query = forms.CharField(
+        label='',
+        widget = forms.TextInput(attrs={
+            'placeholder':'search anything you want...',
+        })
+    )

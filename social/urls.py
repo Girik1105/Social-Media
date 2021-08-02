@@ -30,7 +30,9 @@ urlpatterns = [
 
     path('search/', views.UserSearch.as_view(), name='search'),
 
-    path('remove/notification/<notif_pk>/', views.RemoveNotification.as_view(), name='remove-notification')
+    path('remove/notification/<notif_pk>/', views.RemoveNotification.as_view(), name='remove-notification'),
+
+    path('explore/', views.explore.as_view(), name='explore'),
 ]
 
 if settings.DEBUG:

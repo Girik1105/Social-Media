@@ -13,6 +13,11 @@ from django.utils import timezone
 from . import models, forms
 from groups import models as group_models
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+from .utils import trending_posts
+
 import random
 
 # Create your views here.
@@ -28,7 +33,7 @@ class PostListView(LoginRequiredMixin, View):
         follow = list(models.UserProfile.objects.all())
         follow = random.choices(follow,  k = 5)
         follow = set(follow)
-        
+
         context = {
             'post_list':posts,
             'follow':follow,
@@ -337,7 +342,10 @@ class AddCommentLike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
-class RemoveNotification(View):
+class RemoveNotification(View, LoginRequiredMixin):
+
+    login_url = 'accounts/login/'
+
     def delete(self, request, notif_pk, *args, **kwargs):
         notification = models.Notification.objects.get(pk=notif_pk)
 
@@ -345,3 +353,77 @@ class RemoveNotification(View):
         notification.save()
 
         return HttpResponse('Success', content_type= 'text/plain')
+
+class explore(LoginRequiredMixin,View):
+
+    def get(self, request, *args, **kwargs):
+        query = self.request.GET.get('query')
+        if not query:
+            query = ''
+        tag = models.Tag.objects.filter(name=query).first()
+        group = group_models.Group.objects.filter(
+            Q(name__icontains=query)
+        )
+        users = models.UserProfile.objects.filter(
+            Q(user__username__icontains=query) |
+            Q(name__icontains=query)|
+            Q(location__icontains=query)
+        )
+        posts = models.Post.objects.filter(
+            Q(body=query) |
+            Q(shared_body=query)
+        )
+
+        tag_posts = models.Post.objects.filter(tags__in=[tag]) #any post with that tag will come in this qs
+
+        print(group)
+
+        explore_form = forms.exploreForm()
+
+        context = {
+            "tag_posts":tag_posts,
+            "posts":posts,
+            "users":users,
+            "groups":group,
+
+            "explore_form": explore_form,
+        }
+
+        return render(request, 'social/explore/explore.html', context)
+    
+    def post(self, request, *args, **kwargs):
+
+        explore_form = forms.exploreForm(request.POST)
+
+        if explore_form.is_valid():
+            
+            query = explore_form.cleaned_data['query']
+            
+            tag = models.Tag.objects.filter(name=query).first()
+            group = group_models.Group.objects.filter(name=query)
+            
+            users = models.UserProfile.objects.filter(
+                Q(user__username__icontains=query) |
+                Q(name__icontains=query)|
+                Q(location__icontains=query)
+            )
+            posts = models.Post.objects.filter(
+                Q(body=query) |
+                Q(shared_body=query)
+            )
+
+            tag_posts = models.Post.objects.filter(tags__in=[tag]) #any post with that tag will come in this qs
+
+            explore_form = forms.exploreForm()
+
+            context = {
+                "tag_posts":tag_posts,
+                "posts":posts,
+                "users":users,
+                "groups":group,
+
+                "explore_form": explore_form,
+            }
+            
+
+        return render(request, 'social/explore/explore.html', context)
